@@ -130,64 +130,104 @@ export default function App() {
         {/* Game selector */}
         {!selectedGame && (
           <div>
-            <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ textAlign: "center", marginBottom: 36, padding: "0 16px" }}>
               <h1 style={{
-                fontFamily: "'Press Start 2P'", fontSize: 20, color: "#f8d030",
-                textShadow: "0 0 20px #f8d03066", marginBottom: 8,
+                fontFamily: "'Press Start 2P'", fontSize: "clamp(16px, 4vw, 24px)", color: "#f8d030",
+                textShadow: "0 0 20px #f8d03066", marginBottom: 12,
               }}>
                 PokéBuilder
               </h1>
-              <p style={{ color: "#888", fontSize: 14 }}>
-                Construis ton équipe · Analyse les faiblesses · Couvre tous les types
+              <p style={{ color: "#888", fontSize: "clamp(13px, 2vw, 15px)", maxWidth: 500, margin: "0 auto" }}>
+                Choisis ta version pour commencer à composer ton équipe, analyser tes faiblesses et optimiser ta couverture offensive.
               </p>
             </div>
 
-            {GENERATIONS.map(gen => (
-              <div key={gen.id} style={{ marginBottom: 24 }}>
-                <div style={{
-                  fontSize: 12, fontWeight: 700, color: gen.color,
-                  textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10,
-                  display: "flex", alignItems: "center", gap: 8,
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: 20,
+              paddingBottom: 40
+            }}>
+              {GENERATIONS.map(gen => (
+                <div key={gen.id} style={{
+                  background: "#12122a",
+                  border: `1px solid ${gen.color}33`,
+                  borderRadius: 14,
+                  padding: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                  transition: "border-color 0.2s",
                 }}>
-                  <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: gen.color }} />
-                  {gen.name}
+                  {/* Titre de la génération */}
+                  <div style={{
+                    fontSize: 13, fontWeight: 700, color: gen.color,
+                    textTransform: "uppercase", letterSpacing: "0.08em",
+                    display: "flex", alignItems: "center", gap: 8,
+                    borderBottom: `1px solid ${gen.color}22`,
+                    paddingBottom: 10
+                  }}>
+                    <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: gen.color, boxShadow: `0 0 8px ${gen.color}` }} />
+                    {gen.name}
+                  </div>
+
+                  {/* Boutons des jeux de la génération */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10 }}>
+                    {gen.games.map(game => (
+                      <button
+                        key={game.id}
+                        onClick={() => { selectGen(gen); selectGame(game); }}
+                        style={{
+                          padding: "12px 16px",
+                          background: "#1a1a38",
+                          border: `1px solid ${gen.color}44`,
+                          borderRadius: 10,
+                          cursor: "pointer",
+                          color: "#fff",
+                          fontSize: 14,
+                          fontWeight: 600,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 14,
+                          transition: "all 0.2s ease",
+                          textAlign: "left",
+                          width: "100%",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.borderColor = gen.color;
+                          e.currentTarget.style.background = gen.color + "22";
+                          e.currentTarget.style.transform = "translateY(-2px)";
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.borderColor = gen.color + "44";
+                          e.currentTarget.style.background = "#1a1a38";
+                          e.currentTarget.style.transform = "translateY(0)";
+                        }}
+                      >
+                        {game.logo && (
+                          <div style={{
+                            width: 36, height: 36, background: "#0f0f22", borderRadius: 8,
+                            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                            border: "1px solid #2a2a4a"
+                          }}>
+                            <img
+                              src={game.logo}
+                              alt=""
+                              width={26}
+                              height={26}
+                              style={{ objectFit: "contain", imageRendering: "pixelated" }}
+                            />
+                          </div>
+                        )}
+                        <span style={{ flex: 1 }}>{game.name}</span>
+                        <span style={{ color: gen.color, fontSize: 16, opacity: 0.7 }}>→</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {gen.games.map(game => (
-                    <button
-                      key={game.id}
-                      onClick={() => { selectGen(gen); selectGame(game); }}
-                      style={{
-                        padding: "10px 16px", background: "#12122a",
-                        border: `1px solid ${gen.color}44`,
-                        borderRadius: 8, cursor: "pointer", color: "#ddd",
-                        fontSize: 13, transition: "all 0.15s",
-                        display: "flex", alignItems: "center", gap: 8,
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = gen.color;
-                        e.currentTarget.style.background = gen.color + "22";
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = gen.color + "44";
-                        e.currentTarget.style.background = "#12122a";
-                      }}
-                    >
-                      {game.logo && (
-                        <img
-                          src={game.logo}
-                          alt=""
-                          width={20}
-                          height={20}
-                          style={{ objectFit: "contain", imageRendering: "pixelated" }}
-                        />
-                      )}
-                      <span>{game.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
