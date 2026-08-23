@@ -99,9 +99,20 @@ export default function App() {
           PokéBuilder
         </span>
         {selectedGame && (
-          <span style={{ fontSize: 12, color: "#888", borderLeft: "1px solid #333", paddingLeft: 16 }}>
-            {selectedGen?.name} · {selectedGame.name}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, borderLeft: "1px solid #333", paddingLeft: 16 }}>
+            {selectedGame.logo && (
+              <img
+                src={selectedGame.logo}
+                alt=""
+                width={28}
+                height={28}
+                style={{ objectFit: "contain", imageRendering: "pixelated" }}
+              />
+            )}
+            <span style={{ fontSize: 12, color: "#888" }}>
+              {selectedGen?.name} · {selectedGame.name}
+            </span>
+          </div>
         )}
         {selectedGame && (
           <button
@@ -151,6 +162,7 @@ export default function App() {
                         border: `1px solid ${gen.color}44`,
                         borderRadius: 8, cursor: "pointer", color: "#ddd",
                         fontSize: 13, transition: "all 0.15s",
+                        display: "flex", alignItems: "center", gap: 8,
                       }}
                       onMouseEnter={e => {
                         e.currentTarget.style.borderColor = gen.color;
@@ -161,7 +173,16 @@ export default function App() {
                         e.currentTarget.style.background = "#12122a";
                       }}
                     >
-                      {game.name}
+                      {game.logo && (
+                        <img
+                          src={game.logo}
+                          alt=""
+                          width={20}
+                          height={20}
+                          style={{ objectFit: "contain", imageRendering: "pixelated" }}
+                        />
+                      )}
+                      <span>{game.name}</span>
                     </button>
                   ))}
                 </div>

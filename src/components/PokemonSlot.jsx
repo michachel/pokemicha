@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import TypeBadge from "./TypeBadge";
-import { usePokemonSearch } from "../hooks/usePokeAPI";
+import { usePokemonSearch, useVersionPokemon } from "../hooks/usePokeAPI";
 import { TYPE_COLORS } from "../data/gameData";
 
 export default function PokemonSlot({ slot, maxDex, versionGroup, onUpdate, onRemove }) {
@@ -8,6 +8,7 @@ export default function PokemonSlot({ slot, maxDex, versionGroup, onUpdate, onRe
   const [showSearch, setShowSearch] = useState(false);
   const [showMoves, setShowMoves] = useState(false);
   const { results, loading: searchLoading } = usePokemonSearch(query, maxDex);
+  const { pokemon: versionList, loading: listLoading } = useVersionPokemon(versionGroup, maxDex);
   const inputRef = useRef(null);
 
   const poke = slot?.pokemon;
@@ -16,8 +17,8 @@ export default function PokemonSlot({ slot, maxDex, versionGroup, onUpdate, onRe
     if (showSearch) inputRef.current?.focus();
   }, [showSearch]);
 
-  function selectPokemon(result) {
-    onUpdate({ type: "setPokemon", pokemonId: result.id });
+  function selectPokemon(id) {
+    onUpdate({ type: "setPokemon", pokemonId: id });
     setQuery("");
     setShowSearch(false);
   }
@@ -38,6 +39,11 @@ export default function PokemonSlot({ slot, maxDex, versionGroup, onUpdate, onRe
 
   const selectedMoves = slot?.selectedMoves || [];
   const mainColor = poke?.types?.[0] ? TYPE_COLORS[poke.types[0]] : "#444";
+
+  // Filtrer la grille de sprites selon la saisie texte si l'utilisateur tape quelque chose
+  const filteredGridList = query.trim() === "" 
+    ? versionList 
+    : versionList.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) || p.id.toString() === query);
 
   return (
     <div style={{
@@ -64,62 +70,67 @@ export default function PokemonSlot({ slot, maxDex, versionGroup, onUpdate, onRe
         </button>
       )}
 
-      {/* Search bar */}
+      {/* Search bar & Grid */}
       {showSearch && (
         <div style={{ position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontSize: 11, color: "#aaa", fontWeight: 600, textTransform: "uppercase" }}>Rechercher ou choisir un Pokémon</span>
+            <button
+              onClick={() => setShowSearch(false)}
+              style={{ fontSize: 11, color: "#e74c3c", background: "none", border: "none", cursor: "pointer" }}
+            >Fermer ✕</button>
+          </div>
           <input
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === "Escape" && setShowSearch(false)}
-            placeholder="Nom du Pokémon..."
+            placeholder="Nom ou numéro (#)..."
             style={{
               width: "100%", padding: "8px 12px", background: "#0d0d1a",
               border: "2px solid #4CAF50", borderRadius: 6, color: "#fff",
-              fontSize: 14, boxSizing: "border-box",
+              fontSize: 14, boxSizing: "border-box", marginBottom: 8,
             }}
           />
-          {searchLoading && <div style={{ color: "#888", fontSize: 12, marginTop: 4 }}>Recherche...</div>}
-          {results.length > 0 && (
-            <div style={{
-              position: "absolute", top: "110%", left: 0, right: 0, zIndex: 100,
-              background: "#0d0d1a", border: "1px solid #333", borderRadius: 6,
-              maxHeight: 200, overflowY: "auto",
-            }}>
-              {results.map(r => (
-                <button
-                  key={r.id}
-                  onClick={() => selectPokemon(r)}
-                  style={{
-                    width: "100%", padding: "8px 12px", background: "transparent",
-                    border: "none", borderBottom: "1px solid #222", cursor: "pointer",
-                    color: "#ddd", textAlign: "left", fontSize: 13,
-                    display: "flex", alignItems: "center", gap: 8,
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#1a1a3e"}
-                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                >
-                  <img
-                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${r.id}.png`}
-                    alt=""
-                    width={28}
-                    height={28}
-                    style={{ imageRendering: "pixelated" }}
-                  />
-                  <span style={{ textTransform: "capitalize" }}>#{r.id} {r.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-          <button
-            onClick={() => setShowSearch(false)}
-            style={{ marginTop: 4, fontSize: 11, color: "#888", background: "none", border: "none", cursor: "pointer" }}
-          >Annuler</button>
+          
+          {/* Grille de sprites cliquables */}
+          <div style={{
+            background: "#0d0d1a", border: "1px solid #333", borderRadius: 6,
+            maxHeight: 220, overflowY: "auto", padding: 8,
+            display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))", gap: 6
+          }}>
+            {listLoading && <div style={{ color: "#888", fontSize: 12, gridColumn: "1 / -1", textAlign: "center", padding: 12 }}>Chargement du Pokédex...</div>}
+            
+            {!listLoading && filteredGridList.map(p => (
+              <button
+                key={p.id}
+                onClick={() => selectPokemon(p.id)}
+                title={`#${p.id} ${p.name}`}
+                style={{
+                  background: "#16162c", border: "1px solid #2a2a4a", borderRadius: 6,
+                  padding: 4, cursor: "pointer", display: "flex", flexDirection: "column",
+                  alignItems: "center", transition: "all 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#4CAF50"; e.currentTarget.style.background = "#222244"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "#2a2a4a"; e.currentTarget.style.background = "#16162c"; }}
+              >
+                <img
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`}
+                  alt={p.name}
+                  width={40}
+                  height={40}
+                  style={{ imageRendering: "pixelated" }}
+                />
+                <span style={{ fontSize: 9, color: "#aaa", textTransform: "capitalize", width: "100%", textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {p.name}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Pokemon card */}
-      {poke && (
+      {poke && !showSearch && (
         <>
           {/* Header */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>

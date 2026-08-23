@@ -1,74 +1,73 @@
-// ── Game versions by generation ────────────────────────────────────────────
+// ── Game versions by generation with official logos ────────────────────────
 export const GENERATIONS = [
   {
     id: 1, name: "Génération I", color: "#E74C3C",
     games: [
-      { id: "red-blue", name: "Rouge / Bleu", pokeapi: "red", maxDex: 151 },
-      { id: "yellow", name: "Jaune", pokeapi: "yellow", maxDex: 151 },
+      { id: "red-blue", name: "Rouge / Bleu", pokeapi: "red", maxDex: 151, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" },
+      { id: "yellow", name: "Jaune", pokeapi: "yellow", maxDex: 151, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" },
     ]
   },
   {
     id: 2, name: "Génération II", color: "#F39C12",
     games: [
-      { id: "gold-silver", name: "Or / Argent", pokeapi: "gold", maxDex: 251 },
-      { id: "crystal", name: "Cristal", pokeapi: "crystal", maxDex: 251 },
+      { id: "gold-silver", name: "Or / Argent", pokeapi: "gold", maxDex: 251, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png" },
+      { id: "crystal", name: "Cristal", pokeapi: "crystal", maxDex: 251, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/245.png" },
     ]
   },
   {
     id: 3, name: "Génération III", color: "#27AE60",
     games: [
-      { id: "ruby-sapphire", name: "Rubis / Saphir", pokeapi: "ruby", maxDex: 386 },
-      { id: "emerald", name: "Émeraude", pokeapi: "emerald", maxDex: 386 },
-      { id: "firered-leafgreen", name: "Rouge Feu / Vert Feuille", pokeapi: "firered", maxDex: 386 },
+      { id: "ruby-sapphire", name: "Rubis / Saphir", pokeapi: "ruby", maxDex: 386, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/383.png" },
+      { id: "emerald", name: "Émeraude", pokeapi: "emerald", maxDex: 386, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png" },
+      { id: "firered-leafgreen", name: "Rouge Feu / Vert Feuille", pokeapi: "firered", maxDex: 386, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" },
     ]
   },
   {
     id: 4, name: "Génération IV", color: "#2980B9",
     games: [
-      { id: "diamond-pearl", name: "Diamant / Perle", pokeapi: "diamond", maxDex: 493 },
-      { id: "platinum", name: "Platine", pokeapi: "platinum", maxDex: 493 },
-      { id: "heartgold-soulsilver", name: "Or HeartGold / Argent SoulSilver", pokeapi: "heartgold", maxDex: 493 },
+      { id: "diamond-pearl", name: "Diamant / Perle", pokeapi: "diamond", maxDex: 493, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/483.png" },
+      { id: "platinum", name: "Platine", pokeapi: "platinum", maxDex: 493, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/487.png" },
+      { id: "heartgold-soulsilver", name: "Or HeartGold / Argent SoulSilver", pokeapi: "heartgold", maxDex: 493, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png" },
     ]
   },
   {
     id: 5, name: "Génération V", color: "#8E44AD",
     games: [
-      { id: "black-white", name: "Noir / Blanc", pokeapi: "black", maxDex: 649 },
-      { id: "black2-white2", name: "Noir 2 / Blanc 2", pokeapi: "black-2", maxDex: 649 },
+      { id: "black-white", name: "Noir / Blanc", pokeapi: "black", maxDex: 649, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/643.png" },
+      { id: "black2-white2", name: "Noir 2 / Blanc 2", pokeapi: "black-2", maxDex: 649, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/646.png" },
     ]
   },
   {
     id: 6, name: "Génération VI", color: "#E91E63",
     games: [
-      { id: "x-y", name: "X / Y", pokeapi: "x", maxDex: 721 },
-      { id: "oras", name: "Rubis Oméga / Saphir Alpha", pokeapi: "omega-ruby", maxDex: 721 },
+      { id: "x-y", name: "X / Y", pokeapi: "x", maxDex: 721, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/716.png" },
+      { id: "oras", name: "Rubis Oméga / Saphir Alpha", pokeapi: "omega-ruby", maxDex: 721, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/383.png" },
     ]
   },
   {
     id: 7, name: "Génération VII", color: "#FF6B35",
     games: [
-      { id: "sun-moon", name: "Soleil / Lune", pokeapi: "sun", maxDex: 809 },
-      { id: "usum", name: "Ultra-Soleil / Ultra-Lune", pokeapi: "ultra-sun", maxDex: 809 },
+      { id: "sun-moon", name: "Soleil / Lune", pokeapi: "sun", maxDex: 809, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/791.png" },
+      { id: "usum", name: "Ultra-Soleil / Ultra-Lune", pokeapi: "ultra-sun", maxDex: 809, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/800.png" },
     ]
   },
   {
     id: 8, name: "Génération VIII", color: "#00BCD4",
     games: [
-      { id: "sword-shield", name: "Épée / Bouclier", pokeapi: "sword", maxDex: 905 },
-      { id: "bdsp", name: "Diamant Étincelant / Perle Scintillante", pokeapi: "brilliant-diamond", maxDex: 905 },
-      { id: "legends-arceus", name: "Légendes : Arceus", pokeapi: "legends-arceus", maxDex: 905 },
+      { id: "sword-shield", name: "Épée / Bouclier", pokeapi: "sword", maxDex: 905, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/888.png" },
+      { id: "bdsp", name: "Diamant Étincelant / Perle Scintillante", pokeapi: "brilliant-diamond", maxDex: 905, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/483.png" },
+      { id: "legends-arceus", name: "Légendes : Arceus", pokeapi: "legends-arceus", maxDex: 905, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/493.png" },
     ]
   },
   {
     id: 9, name: "Génération IX", color: "#FF5722",
     games: [
-      { id: "scarlet-violet", name: "Écarlate / Violet", pokeapi: "scarlet", maxDex: 1025 },
+      { id: "scarlet-violet", name: "Écarlate / Violet", pokeapi: "scarlet", maxDex: 1025, logo: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1000.png" },
     ]
   },
 ];
 
 // ── 18-type effectiveness chart (Gen VI+) ─────────────────────────────────
-// defTypes = [attaquant] => modifier
 export const TYPE_CHART = {
   normal:   { rock: 0.5, ghost: 0, steel: 0.5 },
   fire:     { fire: 0.5, water: 0.5, grass: 2, ice: 2, bug: 2, rock: 0.5, dragon: 0.5, steel: 2 },
@@ -96,7 +95,6 @@ export const ALL_TYPES = [
   'bug','rock','ghost','dragon','dark','steel','fairy'
 ];
 
-// Types that didn't exist in Gen 1-2 (no Dark/Steel in Gen1, no Fairy until Gen6)
 export const TYPES_BY_GEN = {
   1: ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon'],
   2: ['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel'],
@@ -106,27 +104,19 @@ export const TYPES_BY_GEN = {
   6: ALL_TYPES, 7: ALL_TYPES, 8: ALL_TYPES, 9: ALL_TYPES,
 };
 
-// ── Ability overrides (immunity/modification to type effectiveness) ─────────
-// Each entry: { immuneTo: [...types], halveTo: [...types], absorbTo: [...types] (heal when hit) }
 export const ABILITY_OVERRIDES = {
-  // Water immunities
   "water-absorb":     { immuneTo: ["water"], absorbTo: ["water"] },
   "dry-skin":         { immuneTo: ["water"], absorbTo: ["water"], weakTo: ["fire"] },
   "storm-drain":      { immuneTo: ["water"], absorbTo: ["water"] },
-  // Fire immunities
   "flash-fire":       { immuneTo: ["fire"] },
   "well-baked-body":  { immuneTo: ["fire"] },
-  // Electric immunities
   "volt-absorb":      { immuneTo: ["electric"], absorbTo: ["electric"] },
   "motor-drive":      { immuneTo: ["electric"] },
   "lightning-rod":    { immuneTo: ["electric"], absorbTo: ["electric"] },
   "earth-eater":      { immuneTo: ["ground"], absorbTo: ["ground"] },
-  // Ground immunity
   "levitate":         { immuneTo: ["ground"] },
   "air-balloon":      { immuneTo: ["ground"] },
-  // Grass
   "sap-sipper":       { immuneTo: ["grass"] },
-  // Other notable
   "thick-fat":        { halveTo: ["fire", "ice"] },
   "heatproof":        { halveTo: ["fire"] },
   "wonder-guard":     { specialWonderGuard: true },
@@ -137,42 +127,20 @@ export const ABILITY_OVERRIDES = {
   "prism-armor":      { halveTo: ["supereffective"] },
 };
 
-// French ability names mapping (subset of most common ones)
 export const ABILITY_NAMES_FR = {
-  "water-absorb": "Absorb'eau",
-  "dry-skin": "Peau sèche",
-  "storm-drain": "Drainorage",
-  "flash-fire": "Torche",
-  "well-baked-body": "Corps cuit",
-  "volt-absorb": "Absorb'volt",
-  "motor-drive": "Moteur Turbo",
-  "lightning-rod": "Paratonnerre",
-  "earth-eater": "Géophage",
-  "levitate": "Lévitation",
-  "air-balloon": "Baudrobal",
-  "sap-sipper": "Herbivore",
-  "thick-fat": "Isograisse",
-  "heatproof": "Ignifugé",
-  "wonder-guard": "Merveille",
-  "fluffy": "Doudou",
-  "purifying-salt": "Sel purificateur",
-  "filter": "Filtre",
-  "solid-rock": "Roc Solide",
-  "prism-armor": "Prisme Armure",
-  "intimidate": "Intimidation",
-  "speed-boost": "Turbo",
-  "natural-cure": "Soin Naturel",
-  "synchronize": "Synchro",
-  "trace": "Calque",
-  "adaptability": "Adapta-Puissance",
-  "hustle": "Dynamisme",
-  "sand-stream": "Sable Volant",
-  "drizzle": "Pluie",
-  "drought": "Sécheresse",
+  "water-absorb": "Absorb'eau", "dry-skin": "Peau sèche", "storm-drain": "Drainorage",
+  "flash-fire": "Torche", "well-baked-body": "Corps cuit", "volt-absorb": "Absorb'volt",
+  "motor-drive": "Moteur Turbo", "lightning-rod": "Paratonnerre", "earth-eater": "Géophage",
+  "levitate": "Lévitation", "air-balloon": "Baudrobal", "sap-sipper": "Herbivore",
+  "thick-fat": "Isograisse", "heatproof": "Ignifugé", "wonder-guard": "Merveille",
+  "fluffy": "Doudou", "purifying-salt": "Sel purificateur", "filter": "Filtre",
+  "solid-rock": "Roc Solide", "prism-armor": "Prisme Armure", "intimidate": "Intimidation",
+  "speed-boost": "Turbo", "natural-cure": "Soin Naturel", "synchronize": "Synchro",
+  "trace": "Calque", "adaptability": "Adapta-Puissance", "hustle": "Dynamisme",
+  "sand-stream": "Sable Volant", "drizzle": "Pluie", "drought": "Sécheresse",
   "snow-warning": "Neige",
 };
 
-// ── Type display ──────────────────────────────────────────────────────────
 export const TYPE_COLORS = {
   normal:   "#A8A878", fire:     "#F08030", water:    "#6890F0",
   electric: "#F8D030", grass:    "#78C850", ice:      "#98D8D8",
