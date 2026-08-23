@@ -1,18 +1,41 @@
 import { useState, useEffect, useCallback } from "react";
-import { ABILITY_OVERRIDES, ABILITY_NAMES_FR, TYPE_NAMES_FR } from "../data/gameData";
 
-// Cache global pour éviter les requêtes en double
 const apiCache = new Map();
 
 async function cachedFetch(url) {
   if (apiCache.has(url)) return apiCache.get(url);
   const res = await fetch(url);
+  if (!res.ok) throw new Error(`Erreur HTTP: ${res.status}`);
   const data = await res.json();
   apiCache.set(url, data);
   return data;
 }
 
-// Récupère les Pokédex disponibles pour un jeu donné (ex: ultra-sun-ultra-moon)
+// Correspondance propre entre les identifiants de jeux de ton app et les Pokédex officiels de la PokéAPI
+const GAME_TO_POKEDEX = {
+  "red": [2, 1],          // Kanto / National
+  "yellow": [2, 1],
+  "gold": [3, 1],         // Johto / National
+  "crystal": [3, 1],
+  "ruby": [4, 1],         // Hoenn / National
+  "emerald": [4, 1],
+  "firered": [2, 1],      // Kanto / National
+  "diamond": [5, 1],      // Sinnoh / National
+  "platinum": [6, 1],     // Extended Sinnoh
+  "heartgold": [3, 1],    // Johto
+  "black": [8, 1],        // Unova / National
+  "black-2": [9, 1],      // Updated Unova
+  "x": [12, 13, 14, 1],   // Kalos (Central, Coastal, Mountain) + National
+  "omega-ruby": [4, 1],   // Hoenn (ORAS) / National
+  "sun": [21, 1],         // Alola (SM)
+  "ultra-sun": [25, 1],   // Alola (USUM)
+  "sword": [27, 28, 1],   // Galar, Isle of Armor, Crown Tundra
+  "brilliant-diamond": [30, 1],
+  "legends-arceus": [31, 1], // Hisui
+  "scarlet": [32, 1],     // Paldea
+};
+
+// Récupère la liste des Pokédex disponibles pour un jeu donné
 export function useVersionPokedexes(versionGroup) {
   const [pokedexes, setPokedexes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,27 +47,28 @@ export function useVersionPokedexes(versionGroup) {
     async function load() {
       setLoading(true);
       try {
-        const vgData = await cachedFetch(`https://pokeapi.co/api/v2/version-group/${versionGroup}`);
-        // Un version-group possède une ou plusieurs pokedex (ex: alola-usum, national...)
-        const pexList = vgData.pokedexes || [];
-        
-        // On récupère les détails de chaque Pokedex pour avoir son nom en français
+        // On récupère la liste des IDs de Pokedex associés à ce jeu, ou le Pokedex National par défaut (id: 1)
+        const pexIds = GAME_TO_POKEDEX[versionGroup] || [1];
+
         const detailedPex = await Promise.all(
-          pexList.map(async p => {
-            const pData = await cachedFetch(p.url);
-            const nameFr = pData.names.find(n => n.language.name === "fr")?.name || pData.name;
-            return {
-              name: pData.name,
-              nameFr: nameFr,
-              id: pData.id,
-              // Pokémon entries avec leur numéro de Pokédex local et l'URL de l'espèce
-              pokemonEntries: pData.pokemon_entries
-            };
+          pexIds.map(async id => {
+            try {
+              const pData = await cachedFetch(`https://pokeapi.co/api/v2/pokedex/${id}`);
+              const nameFr = pData.names.find(n => n.language.name === "fr")?.name || pData.name;
+              return {
+                name: pData.name,
+                nameFr: nameFr,
+                id: pData.id,
+                pokemonEntries: pData.pokemon_entries
+              };
+            } catch (e) {
+              return null;
+            }
           })
         );
 
         if (active) {
-          setPokedexes(detailedPex);
+          setPokedexes(detailedPex.filter(Boolean));
           setLoading(false);
         }
       } catch (err) {
@@ -73,16 +97,14 @@ export function usePokedexPokemon(pokedexId) {
       setLoading(true);
       try {
         const pexData = await cachedFetch(`https://pokeapi.co/api/v2/pokedex/${pokedexId}`);
-        // pokemon_entries contient { entry_number, pokemon_species: { name, url } }
         const entries = pexData.pokemon_entries;
 
-        // Pour chaque entrée, on extrait l'ID national depuis l'URL de l'espèce
+        // Pour chaque entrée, on extrait l'ID national et on va chercher le nom français via l'espèce
         const list = await Promise.all(
           entries.map(async entry => {
             const speciesUrl = entry.pokemon_species.url;
             const speciesId = speciesUrl.split("/").filter(Boolean).pop();
             
-            // On récupère les données de l'espèce pour le nom en français
             const speciesData = await cachedFetch(speciesUrl);
             const nameFr = speciesData.names.find(n => n.language.name === "fr")?.name || entry.pokemon_species.name;
 
@@ -116,14 +138,6 @@ export function usePokedexPokemon(pokedexId) {
   return { pokemon, loading };
 }
 
-// Hook de recherche textuelle globale (inchangé ou adapté)
-export function usePokemonSearch(query, maxDex) {
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  // ... (Garde ton implémentation existante pour la recherche par input)
-  return { results, loading };
-}
-
 // Hook de détails d'un Pokémon (avec traduction française des talents et attaques)
 export function usePokemonDetails() {
   const fetchDetails = useCallback(async (pokemonIdOrName) => {
@@ -132,10 +146,8 @@ export function usePokemonDetails() {
       const species = await cachedFetch(data.species.url);
       const nameFr = species.names.find(n => n.language.name === "fr")?.name || data.name;
 
-      // Traduction des types
       const types = data.types.sort((a, b) => a.slot - b.slot).map(t => t.type.name);
 
-      // Talents
       const abilities = await Promise.all(
         data.abilities.map(async ab => {
           const abData = await cachedFetch(ab.ability.url);
@@ -148,7 +160,6 @@ export function usePokemonDetails() {
         })
       );
 
-      // Attaques
       const moves = await Promise.all(
         data.moves.map(async m => {
           const moveData = await cachedFetch(m.move.url);
