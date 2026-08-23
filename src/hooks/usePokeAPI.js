@@ -11,31 +11,7 @@ async function cachedFetch(url) {
   return data;
 }
 
-// Correspondance propre entre les identifiants de jeux de ton app et les Pokédex officiels de la PokéAPI
-const GAME_TO_POKEDEX = {
-  "red": [2, 1],          // Kanto / National
-  "yellow": [2, 1],
-  "gold": [3, 1],         // Johto / National
-  "crystal": [3, 1],
-  "ruby": [4, 1],         // Hoenn / National
-  "emerald": [4, 1],
-  "firered": [2, 1],      // Kanto / National
-  "diamond": [5, 1],      // Sinnoh / National
-  "platinum": [6, 1],     // Extended Sinnoh
-  "heartgold": [3, 1],    // Johto
-  "black": [8, 1],        // Unova / National
-  "black-2": [9, 1],      // Updated Unova
-  "x": [12, 13, 14, 1],   // Kalos (Central, Coastal, Mountain) + National
-  "omega-ruby": [4, 1],   // Hoenn (ORAS) / National
-  "sun": [21, 1],         // Alola (SM)
-  "ultra-sun": [25, 1],   // Alola (USUM)
-  "sword": [27, 28, 1],   // Galar, Isle of Armor, Crown Tundra
-  "brilliant-diamond": [30, 1],
-  "legends-arceus": [31, 1], // Hisui
-  "scarlet": [32, 1],     // Paldea
-};
-
-// Récupère la liste des Pokédex disponibles pour un jeu donné
+// Récupère dynamiquement la liste officielle des Pokédex associés au jeu
 export function useVersionPokedexes(versionGroup) {
   const [pokedexes, setPokedexes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,19 +23,20 @@ export function useVersionPokedexes(versionGroup) {
     async function load() {
       setLoading(true);
       try {
-        // On récupère la liste des IDs de Pokedex associés à ce jeu, ou le Pokedex National par défaut (id: 1)
-        const pexIds = GAME_TO_POKEDEX[versionGroup] || [1];
+        // 1. On interroge directement le groupe de versions pour obtenir ses Pokédex officiels
+        const vgData = await cachedFetch(`https://pokeapi.co/api/v2/version-group/${versionGroup}`);
+        const pexLinks = vgData.pokedexes || [];
 
+        // 2. On récupère les détails de chaque Pokédex (nom français, id)
         const detailedPex = await Promise.all(
-          pexIds.map(async id => {
+          pexLinks.map(async pex => {
             try {
-              const pData = await cachedFetch(`https://pokeapi.co/api/v2/pokedex/${id}`);
+              const pData = await cachedFetch(pex.url);
               const nameFr = pData.names.find(n => n.language.name === "fr")?.name || pData.name;
               return {
                 name: pData.name,
                 nameFr: nameFr,
                 id: pData.id,
-                pokemonEntries: pData.pokemon_entries
               };
             } catch (e) {
               return null;
@@ -68,12 +45,24 @@ export function useVersionPokedexes(versionGroup) {
         );
 
         if (active) {
-          setPokedexes(detailedPex.filter(Boolean));
+          // On filtre les nuls et on place généralement le Pokédex National en dernier s'il est présent
+          const validPex = detailedPex.filter(Boolean);
+          validPex.sort((a, b) => {
+            if (a.name.includes("national")) return 1;
+            if (b.name.includes("national")) return -1;
+            return 0;
+          });
+
+          setPokedexes(validPex);
           setLoading(false);
         }
       } catch (err) {
-        console.error("Erreur chargement pokedex", err);
-        if (active) setLoading(false);
+        console.error("Erreur chargement pokedex dynamiques", err);
+        // Fallback sur le Pokédex national (id: 1) en cas d'erreur réseau
+        if (active) {
+          setPokedexes([{ id: 1, name: "national", nameFr: "National" }]);
+          setLoading(false);
+        }
       }
     }
 
@@ -84,7 +73,7 @@ export function useVersionPokedexes(versionGroup) {
   return { pokedexes, loading };
 }
 
-// Récupère la liste des Pokémon d'un Pokédex spécifique avec noms en français et sprites
+// Récupère la liste triée et complète des Pokémon d'un Pokédex avec leurs vrais numéros de version
 export function usePokedexPokemon(pokedexId) {
   const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,9 +86,9 @@ export function usePokedexPokemon(pokedexId) {
       setLoading(true);
       try {
         const pexData = await cachedFetch(`https://pokeapi.co/api/v2/pokedex/${pokedexId}`);
-        const entries = pexData.pokemon_entries;
+        const entries = pexData.pokemon_entries || [];
 
-        // Pour chaque entrée, on extrait l'ID national et on va chercher le nom français via l'espèce
+        // Pour chaque entrée, on récupère l'espèce et le nom en français
         const list = await Promise.all(
           entries.map(async entry => {
             const speciesUrl = entry.pokemon_species.url;
@@ -110,7 +99,7 @@ export function usePokedexPokemon(pokedexId) {
 
             return {
               id: parseInt(speciesId, 10),
-              dexNumber: entry.entry_number,
+              dexNumber: entry.entry_number, // Numéro officiel dans le Pokédex de la version
               name: entry.pokemon_species.name,
               nameFr: nameFr,
               sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${speciesId}.png`
@@ -118,7 +107,7 @@ export function usePokedexPokemon(pokedexId) {
           })
         );
 
-        // Tri par numéro dans le Pokédex de la version
+        // Tri strict et obligatoire par le numéro officiel du Pokédex de la version
         list.sort((a, b) => a.dexNumber - b.dexNumber);
 
         if (active) {
